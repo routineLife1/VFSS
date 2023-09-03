@@ -14,9 +14,9 @@ device = torch.device("cuda")
 
 class Model:
     def __init__(self, mode='MOF'):
-        if mode == 'BOF':  # 3
+        if mode == 'BOF':  # 3 frame inputs, not supported currently
             from model.configs.sintel_submission import get_cfg
-        elif mode == 'MOF':  # n
+        elif mode == 'MOF':  # n frame inputs. only 4 frame inputs are supported currently
             from model.configs.multiframes_sintel_submission import get_cfg
             cfg = get_cfg()
             cfg.input_frames = 4
@@ -89,7 +89,7 @@ class Model:
 
         return flow12, flow21, metric0, metric1, feat_ext0, feat_ext1
 
-    def inference(self, img0, img1, img2, img3, reuse_things, timestep):  # 为了对齐输入留下img0, img3
+    def inference(self, img0, img1, img2, img3, reuse_things, timestep):
         flow12, metric0, feat11, feat12, feat13 = reuse_things[0], reuse_things[2], reuse_things[4][0], reuse_things[4][
             1], reuse_things[4][2]
         flow21, metric1, feat21, feat22, feat23 = reuse_things[1], reuse_things[3], reuse_things[5][0], reuse_things[5][
