@@ -1,6 +1,6 @@
 # Video Frame Interpolation Via Videoflow
 ## Introduction
-This is a video frame interpolation algorithm implemented using [VideoFlow](https://github.com/XiaoyuShi97/VideoFlow), which ranks first in Sintel Clean ranking.
+This is a video frame interpolation algorithm implemented using [VideoFlow](https://github.com/XiaoyuShi97/VideoFlow), which using multiple frame inputs and ranked first in Sintel Clean.
 
 ## CLI Usage
 
