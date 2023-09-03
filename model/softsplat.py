@@ -315,7 +315,7 @@ class softsplat_func(torch.autograd.Function):
                     int intSoutheastX = intNorthwestX + 1;
                     int intSoutheastY = intNorthwestY + 1;
                     
-                    // 高斯核
+                    // Gaussian
                     
                     /*
                     for (int i = intNorthwestX - 1; i < intNorthwestX + 3; i++)
@@ -331,7 +331,7 @@ class softsplat_func(torch.autograd.Function):
                     } 
                     */
                     
-                    // 以下为双线性
+                    
                     
                     {{type}} fltNorthwest = (({{type}}) (intSoutheastX) - fltX) * (({{type}}) (intSoutheastY) - fltY);
                     {{type}} fltNortheast = (fltX - ({{type}}) (intSouthwestX)) * (({{type}}) (intSouthwestY) - fltY);
@@ -420,7 +420,7 @@ class softsplat_func(torch.autograd.Function):
                     int intSoutheastX = intNorthwestX + 1;
                     int intSoutheastY = intNorthwestY + 1;
 
-                    // 高斯核
+                    // Gaussian
                     /*
                     for (int i = intNorthwestX - 1; i < intNorthwestX + 3; i++)
                     {
@@ -435,7 +435,7 @@ class softsplat_func(torch.autograd.Function):
                     } 
                     */
 
-                    // 双线性
+                    // 
                     
                     {{type}} fltNorthwest = (({{type}}) (intSoutheastX) - fltX) * (({{type}}) (intSoutheastY) - fltY);
                     {{type}} fltNortheast = (fltX - ({{type}}) (intSouthwestX)) * (({{type}}) (intSouthwestY) - fltY);
@@ -530,7 +530,7 @@ class softsplat_func(torch.autograd.Function):
                     for (int intChannel = 0; intChannel < SIZE_1(tenOutgrad); intChannel += 1) {
                         {{type}} fltIn = VALUE_4(tenIn, intN, intChannel, intY, intX);
                     
-                        // 高斯核
+                        // Gaussian
                         
                         /*
                         for (int i = intNorthwestX - 1; i < intNorthwestX + 3; i++)
@@ -552,7 +552,7 @@ class softsplat_func(torch.autograd.Function):
                         } 
                         */
 
-                        //双线性
+                        //
 
                         if ((intNorthwestX >= 0) && (intNorthwestX < SIZE_3(tenOutgrad)) && (intNorthwestY >= 0) && (intNorthwestY < SIZE_2(tenOutgrad))) {
                             fltFlowgrad += VALUE_4(tenOutgrad, intN, intChannel, intNorthwestY, intNorthwestX) * fltIn * fltNorthwest;
@@ -646,7 +646,7 @@ class softsplat_zmax_func(torch.autograd.Function):
                     int intSoutheastX = intNorthwestX + 1;
                     int intSoutheastY = intNorthwestY + 1;
                     
-                    //高斯核
+                    //Gaussian
                     
                     /*
                     for (int i = intNorthwestX - 1; i < intNorthwestX + 3; i++)
@@ -660,7 +660,7 @@ class softsplat_zmax_func(torch.autograd.Function):
                     } 
                     */
 
-                    // 双线性
+                    // 
                     
                     if ((intNorthwestX >= 0) && (intNorthwestX < SIZE_3(tenOut)) && (intNorthwestY >= 0) && (intNorthwestY < SIZE_2(tenOut))) {
                         atomicMaxFloat(&tenOut[OFFSET_4(tenOut, intN, intC, intNorthwestY, intNorthwestX)], fltIn);
