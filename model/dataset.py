@@ -70,7 +70,7 @@ class VimeoDataset(Dataset):
             if random.uniform(0, 1) < 0.5:
                 imgs = [img[:, ::-1] for img in imgs]
             if random.uniform(0, 1) < 0.5:
-                imgs = reversed(imgs) # gt位置不会变
+                imgs = reversed(imgs)
                 timestep = 1 - timestep
             # random rotation
             p = random.uniform(0, 1)
