@@ -104,7 +104,7 @@ if not args.video is None:
     else:
         fpsNotAssigned = False
     videogen = skvideo.io.vreader(args.video)
-    lastframe = next(videogen)
+    i0 = next(videogen)
     fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
     video_path_wo_ext, ext = os.path.splitext(args.video)
     print('{}.{}, {} frames in total, {}FPS to {}FPS'.format(video_path_wo_ext, args.ext, tot_frame, fps, args.fps))
@@ -119,9 +119,9 @@ else:
             videogen.append(f)
     tot_frame = len(videogen)
     videogen.sort(key=lambda x: int(x[:-4]))
-    lastframe = cv2.imread(os.path.join(args.img, videogen[0]), cv2.IMREAD_UNCHANGED)[:, :, ::-1].copy()
+    i0 = cv2.imread(os.path.join(args.img, videogen[0]), cv2.IMREAD_UNCHANGED)[:, :, ::-1].copy()
     videogen = videogen[1:]
-h, w, _ = lastframe.shape
+h, w, _ = i0.shape
 vid_out_name = None
 vid_out = None
 if args.png:
@@ -185,67 +185,66 @@ pw = ((w - 1) // tmp + 1) * tmp
 padding = (0, pw - w, 0, ph - h)
 pbar = tqdm(total=tot_frame)
 if args.montage:
-    lastframe = lastframe[:, left: left + w]
+    i0 = i0[:, left: left + w]
 write_buffer = Queue(maxsize=500)
 read_buffer = Queue(maxsize=500)
 _thread.start_new_thread(build_read_buffer, (args, read_buffer, videogen))
 _thread.start_new_thread(clear_write_buffer, (args, write_buffer))
 
 # head of the video
-I0 = torch.from_numpy(np.transpose(lastframe, (2, 0, 1))).to(device, non_blocking=True).unsqueeze(0).float() / 255.
+I0 = torch.from_numpy(np.transpose(i0, (2, 0, 1))).to(device, non_blocking=True).unsqueeze(0).float() / 255.
 I0 = F.interpolate(I0, (ph, pw), mode='bilinear', align_corners=False)
-frame = read_buffer.get()
-assert frame is not None
-I1 = torch.from_numpy(np.transpose(frame, (2, 0, 1))).to(device, non_blocking=True).unsqueeze(0).float() / 255.
+i1 = read_buffer.get()
+assert i1 is not None
+I1 = torch.from_numpy(np.transpose(i1, (2, 0, 1))).to(device, non_blocking=True).unsqueeze(0).float() / 255.
 I1 = F.interpolate(I1, (ph, pw), mode='bilinear', align_corners=False)
+i2 = read_buffer.get()
+assert i2 is not None
+I2 = torch.from_numpy(np.transpose(i2, (2, 0, 1))).to(device, non_blocking=True).unsqueeze(0).float() / 255.
+I2 = F.interpolate(I2, (ph, pw), mode='bilinear', align_corners=False)
 output = make_inference(I0, I0, I1, I1, args.multi - 1, args.scale)
 if args.montage:
-    write_buffer.put(np.concatenate((lastframe, lastframe), 1))
+    write_buffer.put(np.concatenate((i0, i0), 1))
     for mid in output:
         mid = (mid[0] * 255.).byte().cpu().numpy().transpose(1, 2, 0)
-        write_buffer.put(np.concatenate((lastframe, mid[:h, :w]), 1))
+        write_buffer.put(np.concatenate((i0, mid[:h, :w]), 1))
 else:
-    write_buffer.put(lastframe)
+    write_buffer.put(i0)
     for mid in output:
         mid = F.interpolate(mid, (h, w), mode='bilinear', align_corners=False)
         mid = (mid[0] * 255.).byte().cpu().numpy().transpose(1, 2, 0)
         write_buffer.put(mid)
 
+
 while True:
-    i2 = read_buffer.get()
-    if i2 is None:
-        break
     i3 = read_buffer.get()
     if i3 is None:
         # end of the video
-        I2 = torch.from_numpy(np.transpose(i2, (2, 0, 1))).to(device, non_blocking=True).unsqueeze(0).float() / 255.
-        I2 = F.interpolate(I2, (ph, pw), mode='bilinear', align_corners=False)
         output = make_inference(I1, I1, I2, I2, args.multi - 1, args.scale)
     else:
-        I2 = torch.from_numpy(np.transpose(i2, (2, 0, 1))).to(device, non_blocking=True).unsqueeze(0).float() / 255.
-        I2 = F.interpolate(I2, (ph, pw), mode='bilinear', align_corners=False)
         I3 = torch.from_numpy(np.transpose(i3, (2, 0, 1))).to(device, non_blocking=True).unsqueeze(0).float() / 255.
         I3 = F.interpolate(I3, (ph, pw), mode='bilinear', align_corners=False)
         output = make_inference(I0, I1, I2, I3, args.multi - 1, args.scale)
 
     if args.montage:
-        write_buffer.put(np.concatenate((lastframe, lastframe), 1))
+        write_buffer.put(np.concatenate((i1, i1), 1))
         for mid in output:
             mid = (mid[0] * 255.).byte().cpu().numpy().transpose(1, 2, 0)
-            write_buffer.put(np.concatenate((lastframe, mid[:h, :w]), 1))
+            write_buffer.put(np.concatenate((i1, mid[:h, :w]), 1))
     else:
-        write_buffer.put(lastframe)
+        write_buffer.put(i1)
         for mid in output:
             mid = F.interpolate(mid, (h, w), mode='bilinear', align_corners=False)
             mid = (mid[0] * 255.).byte().cpu().numpy().transpose(1, 2, 0)
             write_buffer.put(mid)
     pbar.update(1)
-    lastframe = frame
+    i0, i1, i2 = i1, i2, i3
+    I0, I1, I2 = I1, I2, I3
 
 if args.montage:
-    write_buffer.put(np.concatenate((lastframe, lastframe), 1))
+    write_buffer.put(np.concatenate((i2, i2), 1))
 else:
-    write_buffer.put(lastframe)
+    write_buffer.put(i2)
 
 while not write_buffer.empty():
     time.sleep(0.1)
