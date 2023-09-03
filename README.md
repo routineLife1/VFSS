@@ -58,3 +58,6 @@ Optical Flow:
 
 Video Interpolation: 
 [GMFSS](https://github.com/98mxr/GMFSS_Fortuna)   [RIFE](https://github.com/megvii-research/ECCV2022-RIFE)
+
+## Acknowledgment
+This project is sponsored by [SVFI](https://steamcommunity.com/app/1692080) [Development Team](https://github.com/Justin62628/Squirrel-RIFE)
