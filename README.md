@@ -7,8 +7,8 @@ This is a video frame interpolation algorithm implemented using [VideoFlow](http
 ### Installation
 
 ```
-git clone git@github.com:hyw-dev/VFSS.git
-cd VFSS-master
+git clone https://github.com/hyw-dev/VFSS.git
+cd VFSS
 pip3 install -r requirements.txt
 ```
 
