@@ -57,7 +57,7 @@ Optical Flow:
 [VideoFlow](https://github.com/XiaoyuShi97/VideoFlow)
 
 Video Interpolation: 
-[GMFSS](https://github.com/98mxr/GMFSS_Fortuna)   [RIFE](https://github.com/megvii-research/ECCV2022-RIFE)
+[GMFSS](https://github.com/98mxr/GMFSS_Fortuna)   [RIFE](https://github.com/megvii-research/ECCV2022-RIFE)   [softsplat](https://github.com/sniklaus/softmax-splatting)
 
 ## Acknowledgment
 This project is sponsored by [SVFI](https://steamcommunity.com/app/1692080) [Development Team](https://github.com/Justin62628/Squirrel-RIFE)
