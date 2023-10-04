@@ -1,10 +1,10 @@
-# Video Frame Interpolation Via Videoflow
+# Videoflow based video frame interpolation
 ## Introduction
 This is a video frame interpolation algorithm implemented using [VideoFlow](https://github.com/XiaoyuShi97/VideoFlow), which uses multiple frame inputs and ranked first in [Sintel Clean](http://sintel.is.tue.mpg.de/quant?metric_id=0&selected_pass=1).
 
 ---
 
-**2023-10-04: We have updated an anime model and trained it for 60 epochs on our proprietary dataset.**
+**2023-10-04: We have updated an anime model and trained it for 60 epochs on our proprietary dataset, and we will soon release a new model that can better gather spatiotemporal information.**
 
 ---
 
