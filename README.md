@@ -1,4 +1,4 @@
-# Videoflow based video frame interpolation
+# VideoFlow based video frame interpolation
 ## Introduction
 This is a video frame interpolation algorithm implemented using [VideoFlow](https://github.com/XiaoyuShi97/VideoFlow), which uses multiple frame inputs and ranked first in [Sintel Clean](http://sintel.is.tue.mpg.de/quant?metric_id=0&selected_pass=1).
 
