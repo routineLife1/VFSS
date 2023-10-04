@@ -52,7 +52,7 @@ python3 inference_video.py --video=video.mp4 --montage --png --model_type [anime
 ## Training
 Download [Vimeo90K dataset(septuplet)](http://toflow.csail.mit.edu/index.html#septuplet).
 
-We use 1xV100 for training **(Note that our model only trained 12 epoch on the vimeo septuplet)**: 
+We use 1xV100 for training **(Note that our real model only trained 12 epoch on the vimeo septuplet)**: 
 ```
 python train.py
 ```
