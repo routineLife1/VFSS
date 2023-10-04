@@ -67,11 +67,13 @@ parser.add_argument('--model', dest='modelDir', type=str, default='train_log',
 parser.add_argument('--scale', dest='scale', type=float, default=1.0, help='Try scale=0.5 for 4k video')
 parser.add_argument('--fps', dest='fps', type=int, default=None)
 parser.add_argument('--png', dest='png', action='store_true', help='whether to vid_out png format vid_outs')
-parser.add_argument('--ext', dest='ext', type=str, default='mp4', help='vid_out video extension')
+parser.add_argument('--ext', dest='ext', type=str, default='mkv', help='vid_out video extension')
 parser.add_argument('--exp', dest='exp', type=int, default=1)
 parser.add_argument('--multi', dest='multi', type=int, default=2)
 parser.add_argument('--flow_mode', dest='mode', type=str, default='MOF',
                     help='MOF use 4 frames when inference video, BOF use 3 frames')
+parser.add_argument('--model_type', dest='model_type', type=str, default='anime',
+                    help='anime/real')
 
 args = parser.parse_args()
 if args.exp != 1:
@@ -88,7 +90,10 @@ if torch.cuda.is_available():
     torch.backends.cudnn.benchmark = True
 
 model = Model(args.mode)
-model.load_model(args.modelDir, -1)
+if args.model_type == 'anime':
+    model.load_model(os.path.join(args.modelDir, 'anime'), -1)
+else:
+    model.load_model(os.path.join(args.modelDir, 'real'), -1)
 print("Loaded model")
 model.eval()
 model.device()
@@ -214,7 +219,6 @@ else:
         mid = F.interpolate(mid, (h, w), mode='bilinear', align_corners=False)
         mid = (mid[0] * 255.).byte().cpu().numpy().transpose(1, 2, 0)
         write_buffer.put(mid)
-
 
 while True:
     i3 = read_buffer.get()
